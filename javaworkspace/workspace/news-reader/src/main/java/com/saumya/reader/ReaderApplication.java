@@ -30,13 +30,20 @@ public class ReaderApplication {
 		Thread economics_pub = new Thread(new Runnable() {
 			   public void run() {
 			       System.out.println("economics_pub running");
+			       String oldHashCode = "";
 			       while (true){
 //			            if (condition){
 //			               // your logic
 //			            }
 			           
-			    	   ArticlesManager.getFeedData(articleDetailDaoImpl, pub_economics, pub_economics_url);
-			    	   
+			    	   String content = ArticlesManager.getFeedData(articleDetailDaoImpl, pub_economics, pub_economics_url);
+			    	   String newHashCode = ArticlesManager.createMD5Hash(content);
+			    	   System.out.println("outside: " + oldHashCode);
+			    	   if(!newHashCode.equals(oldHashCode)) {
+			    		   ArticlesManager.dumpData(articleDetailDaoImpl, pub_economics, content);
+			    		   oldHashCode = newHashCode;
+			    		   System.out.println("inside: " + oldHashCode);
+			    	   }
 			    	   try {
 							Thread.sleep(1000*60);
 							} catch (InterruptedException e) {
@@ -50,19 +57,25 @@ public class ReaderApplication {
 		Thread cnbc_pub = new Thread(new Runnable() {
 			   public void run() {
 			       System.out.println("cnbc_pub running");
+			       String oldHashCode = "";
 			       while (true){
 //			            if (condition){
 //			               // your logic
 //			            }
-			    	   
-			    	   ArticlesManager.getFeedData(articleDetailDaoImpl, pub_cnbc, pub_cnbc_url);
 			           
+			    	   String content = ArticlesManager.getFeedData(articleDetailDaoImpl, pub_cnbc, pub_cnbc_url);
+			    	   String newHashCode = ArticlesManager.createMD5Hash(content);
+			    	   if(!newHashCode.equals(oldHashCode)) {
+			    		   ArticlesManager.dumpData(articleDetailDaoImpl, pub_cnbc, content);
+			    		   oldHashCode = newHashCode;
+			    	   }
 			    	   try {
 							Thread.sleep(1000*60);
 							} catch (InterruptedException e) {
 								e.printStackTrace();
 							}
 			       }
+			      
 			   }
 			});
 		cnbc_pub.start();
@@ -70,18 +83,23 @@ public class ReaderApplication {
 		Thread business_pub = new Thread(new Runnable() {
 			   public void run() {
 			       System.out.println("business_pub running");
+			       String oldHashCode = "";
 			       while (true){
 //			            if (condition){
 //			               // your logic
 //			            }
 			           
-			    	   ArticlesManager.getFeedData(articleDetailDaoImpl, pub_business, pub_business_url);
-			    	   
-						try {
-						Thread.sleep(1000*60);
-						} catch (InterruptedException e) {
-							e.printStackTrace();
-						}
+			    	   String content = ArticlesManager.getFeedData(articleDetailDaoImpl, pub_business, pub_business_url);
+			    	   String newHashCode = ArticlesManager.createMD5Hash(content);
+			    	   if(!newHashCode.equals(oldHashCode)) {
+			    		   ArticlesManager.dumpData(articleDetailDaoImpl, pub_business, content);
+			    		   oldHashCode = newHashCode;
+			    	   }
+			    	   try {
+							Thread.sleep(1000*60);
+							} catch (InterruptedException e) {
+								e.printStackTrace();
+							}
 			       }
 			   }
 			});
