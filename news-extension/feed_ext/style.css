@@ -1,0 +1,23 @@
+.container {
+    margin: 1.5em;
+    text-align: center;
+    border: 5px double #1c6ea4;
+    padding: 20px;
+}
+
+.result {
+    margin-top:1em ;
+    text-align: start;
+    text-rendering: auto;
+}
+
+/* li.home {<!--from  www.j ava2 s  .  com-->
+  background-color: red;
+  border: 2px solid black;
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
+  border-radius: 5px;
+  -webkit-border-left: 0px;
+  -moz-border-left: 0px;
+  border-left: 0px;
+} */

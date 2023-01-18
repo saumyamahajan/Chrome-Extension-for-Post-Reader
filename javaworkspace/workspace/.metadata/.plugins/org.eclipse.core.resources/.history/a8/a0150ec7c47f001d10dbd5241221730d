@@ -1,0 +1,40 @@
+package com.saumya.reader;
+
+import java.util.List;
+
+import com.saumya.db.ArticleDetailDaoImpl;
+
+public class ArticlesManager {
+
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+		ArticlesManager.getFeedData("economics times", "https://cfo.economictimes.indiatimes.com/rss/economy");
+		
+	}
+	
+	public static List<Articles> getFeedData(String publisher, String URL){
+		
+		NewsReader newsReader = new NewsReader();
+		DomParser dp = new DomParser();
+		
+		String content = newsReader.getUrlContent(URL);
+		List<Articles> articles = dp.readXMLDomParser(publisher, content);
+		System.out.println("Main SIZE: " + articles.size());
+		
+		return articles;
+	}
+
+	public synchronized static void getFeedData(ArticleDetailDaoImpl articleDetailDaoImpl, String publisher, String URL){
+		
+		NewsReader newsReader = new NewsReader();
+		DomParser dp = new DomParser();
+		
+		String content = newsReader.getUrlContent(URL);
+		List<Articles> articles = dp.readXMLDomParser(publisher, content);
+		System.out.println("Main SIZE: " + articles.size());
+		articleDetailDaoImpl.batchUpdateUsingJdbcTemplate(articles);
+		
+	}
+
+	
+}

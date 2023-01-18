@@ -1,0 +1,44 @@
+package com.saumya.reader;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import com.saumya.db.ArticleDetailDaoImpl;
+
+@SpringBootApplication
+public class ReaderApplication {
+
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+
+		org.springframework.context.ApplicationContext context = new ClassPathXmlApplicationContext("ArticleDataSource.xml");
+
+		ArticleDetailDaoImpl articleDetailDaoImpl = (ArticleDetailDaoImpl)
+	         context.getBean("articleDetailDaoBean");
+		
+		ArticlesManager articlesManager = new ArticlesManager();
+		//List<Articles> articles = articlesManager.getFeedData("economics times", "https://cfo.economictimes.indiatimes.com/rss/economy");
+		Map<String, String> publisher = populatePublisher();
+		for (Map.Entry<String,String> entry : publisher.entrySet()) {
+            System.out.println("Key = " + entry.getKey() + ", Value = " + entry.getValue());
+            List<Articles> article = articlesManager.getFeedData(entry.getKey(), entry.getValue());
+            articleDetailDaoImpl.batchUpdateUsingJdbcTemplate(article);
+		}
+		//System.out.println("Main SIZE: " + publisher.size());
+	}
+
+	public static Map<String, String> populatePublisher(){
+		Map<String, String> publishers = new HashMap();
+		
+		publishers.put("economics times", "https://cfo.economictimes.indiatimes.com/rss/economy");
+		publishers.put("Business Std", "https://www.business-standard.com/rss/markets-106.rss");
+		publishers.put("CNBC", "https://search.cnbc.com/rs/search/combinedcms/view.xml?partnerId=wrss01&id=10000664");
+		
+		return publishers;
+	}
+	
+}

@@ -1,0 +1,79 @@
+package com.saumya.reader;
+
+import java.math.BigInteger;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.List;
+
+import com.saumya.db.ArticleDetailDaoImpl;
+
+public class ArticlesManager {
+
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+		ArticlesManager.getFeedData("economics times", "https://cfo.economictimes.indiatimes.com/rss/economy");
+		
+	}
+	
+	public static List<Articles> getFeedData(String publisher, String URL){
+		
+		NewsReader newsReader = new NewsReader();
+		DomParser dp = new DomParser();
+		
+		String content = newsReader.getUrlContent(URL);
+		List<Articles> articles = dp.readXMLDomParser(publisher, content);
+		System.out.println("Main SIZE: " + articles.size());
+		
+		return articles;
+	}
+
+//	public synchronized static void getFeedData(ArticleDetailDaoImpl articleDetailDaoImpl, String publisher, String URL){
+//		
+//		NewsReader newsReader = new NewsReader();
+//		DomParser dp = new DomParser();
+//		
+//		String content = newsReader.getUrlContent(URL);
+//		List<Articles> articles = dp.readXMLDomParser(publisher, content);
+//		System.out.println("Main SIZE: " + articles.size());
+//		articleDetailDaoImpl.batchUpdateUsingJdbcTemplate(articles);
+//		
+//	}
+//	
+public synchronized static void getFeedData(ArticleDetailDaoImpl articleDetailDaoImpl, String publisher, String URL){
+		
+		NewsReader newsReader = new NewsReader();
+		DomParser dp = new DomParser();
+		
+		String content = newsReader.getUrlContent(URL);
+		String currentHash = createMD5Hash(content);
+		
+		List<Articles> articles = dp.readXMLDomParser(publisher, content);
+		System.out.println("Main SIZE: " + articles.size());
+		articleDetailDaoImpl.batchUpdateUsingJdbcTemplate(articles);
+		
+	}
+
+public static String createMD5Hash(final String input){
+
+   String hashtext = null;
+   MessageDigest md = MessageDigest.getInstance("MD5");
+
+   // Compute message digest of the input
+   byte[] messageDigest = md.digest(input.getBytes());
+
+   hashtext = convertToHex(messageDigest);
+
+   return hashtext;
+}
+
+private String convertToHex(final byte[] messageDigest) {
+   BigInteger bigint = new BigInteger(1, messageDigest);
+   String hexText = bigint.toString(16);
+   while (hexText.length() < 32) {
+      hexText = "0".concat(hexText);
+   }
+   return hexText;
+}
+
+	
+}
